@@ -1,0 +1,28 @@
+```{r}
+library(tidyverse)
+```
+
+```{r}
+data<-readxl::read_xlsx("Day_1/Data.xlsx")
+```
+
+```{r Part1}
+data|>
+  mutate(Change=case_when(Depth>lag(Depth)~"Increase",
+                           Depth<lag(Depth)~"Decrease",
+                           T~"Same"))|>
+  count(Change)
+```
+
+```{r Part2}
+library(zoo)
+
+Window_average=c(rollapply(data$Depth,3,mean),NA,NA)
+
+data|>
+  mutate(Window_average=Window_average)%>%
+  mutate(Change=case_when(Window_average>lag(Window_average)~"Increase",
+                           Window_average<lag(Window_average)~"Decrease",
+                           T~"Same"))|>
+  count(Change)
+```
