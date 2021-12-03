@@ -1,0 +1,84 @@
+```{r}
+library(rlang)
+Data<-readxl::read_xlsx("Day_3/Data.xlsx",sheet = "Sheet2")%>%
+  mutate(bin_str=str_pad(bin,width = 12,pad = "0"))%>%
+  rowwise()%>%
+  mutate(Digits=(str_split(bin_str,pattern = "")))%>%
+  unnest_wider(Digits)%>%
+  ungroup()
+names(Data)[3:14]<-letters[1:12] 
+```
+
+```{r}
+Max_str<-c()
+Min_str<-c()
+Data2<-Data
+for (i in seq(1:12))
+{
+  Max<-Data2%>%
+    count((!!sym(letters[i])))%>%
+    arrange(n)%>%
+      slice_max(n)%>%
+    pull(1)
+    Min<-Data2%>%
+    count((!!sym(letters[i])))%>%
+    arrange(n)%>%
+      slice_min(n)%>%
+      pull(1)
+Max_str<-c(Max_str,Max)
+Min_str<-c(Min_str,Min)
+}
+Max<-strtoi((paste(Max_str,collapse = "")),base=2)
+Min<-strtoi((paste(Min_str,collapse = "")),base=2)
+Max*Min
+```
+
+```{r}
+Data2<-Data
+for (i in seq(1:12))
+{
+  Max<-Data2%>%
+    count((!!sym(letters[i])))%>%
+    arrange(n)%>%
+      slice_max(n)%>%
+    pull(1)
+  if(length(Max)==2)
+  {
+    Max="1"
+  }
+  Data2<-Data2%>%
+    filter(!!sym(letters[i])==Max)
+  print(paste(i,letters[i],Max,nrow(Data2)))
+   if(nrow(Data2)==1)
+   {
+     break
+   }
+}
+Oxygen<-strtoi(Data2$bin_str[1],base=2)
+```
+
+```{r}
+Data2<-Data
+for (i in seq(1:12))
+{
+  Min<-Data2%>%
+    count((!!sym(letters[i])))%>%
+    arrange(n)%>%
+      slice_min(n)%>%
+    pull(1)
+  if(length(Min)==2)
+  {
+    Min="0"
+  }
+  Data2<-Data2%>%
+    filter(!!sym(letters[i])==Min)
+  print(paste(i,letters[i],Min,nrow(Data2)))
+   if(nrow(Data2)==1)
+   {
+     break
+   }
+}
+Carbon<-strtoi(Data2$bin_str[1],base=2)
+Carbon*Oxygen
+```
+
