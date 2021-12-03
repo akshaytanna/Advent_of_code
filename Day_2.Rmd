@@ -1,0 +1,8 @@
+```{r}
+dir.create("Day_2")
+```
+
+```{r}
+readLines("https://adventofcode.com/2021/day/1/input")
+```
+
