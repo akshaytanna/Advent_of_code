@@ -1,0 +1,43 @@
+```{r}
+Raw_data<-readxl::read_xlsx("Data.xlsx")
+# part1
+Data<-Raw_data%>%filter(X2==X1|Y2==Y1)
+#part2
+Data<-Raw_data
+
+Occupied<-c()
+
+for (i in seq(1,nrow(Data)))
+{
+  x_lined<-c(Data$X1[i]:Data$X2[i])
+  y_lined<-c(Data$Y1[i]:Data$Y2[i])
+  occupied<-c(paste(x_lined,y_lined))
+  
+Occupied<-c(Occupied,occupied)
+}
+as.data.frame(table(Occupied))%>%
+  arrange(-Freq)%>%
+  filter(Freq>=2)%>%
+  nrow()
+
+
+```
+```{r}
+
+X1_table<-as.data.frame(table(Data2$X1))
+names(X1_table)[1]<-"X1"
+
+Y1_table<-as.data.frame(table(Data2$Y1))
+names(Y1_table)[1]<-"Y1"
+
+X2_table<-as.data.frame(table(Data2$X1))
+names(X2_table)[1]<-"X2"
+
+Y2_table<-as.data.frame(table(Data2$Y2))
+names(Y2_table)[1]<-"Y2"
+
+
+
+
+```
+

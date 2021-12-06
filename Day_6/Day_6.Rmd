@@ -1,0 +1,72 @@
+```{r}
+Raw_data<-c(4,1,1,4,1,1,1,1,1,1,1,1,3,4,1,1,1,3,1,3,1,1,1,1,1,1,1,1,1,3,1,3,1,1,1,5,1,2,1,1,5,3,4,2,1,1,4,1,1,5,1,1,5,5,1,1,5,2,1,4,1,2,1,4,5,4,1,1,1,1,3,1,1,1,4,3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,5,1,1,2,1,1,1,1,1,1,1,2,4,4,1,1,3,1,3,2,4,3,1,1,1,1,1,2,1,1,1,1,2,5,1,1,1,1,2,1,1,1,1,1,1,1,2,1,1,4,1,5,1,3,1,1,1,1,1,5,1,1,1,3,1,2,1,2,1,3,4,5,1,1,1,1,1,1,5,1,1,1,1,1,1,1,1,3,1,1,3,1,1,4,1,1,1,1,1,2,1,1,1,1,3,2,1,1,1,4,2,1,1,1,4,1,1,2,3,1,4,1,5,1,1,1,2,1,5,3,3,3,1,5,3,1,1,1,1,1,1,1,1,4,5,3,1,1,5,1,1,1,4,1,1,5,1,2,3,4,2,1,5,2,1,2,5,1,1,1,1,4,1,2,1,1,1,2,5,1,1,5,1,1,1,3,2,4,1,3,1,1,2,1,5,1,3,4,4,2,2,1,1,1,1,5,1,5,2)
+
+
+
+```
+
+```{r}
+
+Data<-Raw_data
+for (i in seq(1,80))
+{
+  Data<-Data-1
+  To_add<-length(Data[which(Data==-1)])
+  Data[which(Data==-1)]=6
+  Add<-rep(8,To_add)
+  Data<-c(Data,Add)
+}
+length(Data)
+```
+
+```{r}
+options(sipen=999)
+Possible_data<-seq(min(Raw_data),max(Raw_data))
+Data_pop<-c()
+
+for(i in seq(1,length(Possible_data)))
+{
+Data<-Possible_data[i]
+
+for(j in seq(0,8))
+{
+  assign(paste0("Day_",j),length(Data[which(Data==j)]))
+}
+
+for (l in seq(1,256))
+{
+  To_spawn<-Day_0
+  for(k in seq(0,7))
+  {
+    assign(paste0("Day_",k),get(paste0("Day_",k+1)))
+}
+    Day_6<-Day_6+To_spawn
+    Day_8<-To_spawn
+}
+Data_pop[i]<-sum(Day_0,Day_1,Day_2,Day_3,Day_4,Day_5,Day_6,Day_7,Day_8)
+}
+Key<-data.frame(Possible_data,Data_pop)
+
+as.data.frame(table(Raw_data))%>%
+  mutate(Raw_data=as.numeric(Raw_data))%>%
+  left_join(Key,by = c("Raw_data" = "Possible_data"))%>%
+  mutate(Population=Freq*Data_pop)%>%
+  pull(Population)%>%
+  sum()
+```
+
+```{r}
+Pops<-ls(pattern = "^Pop_")
+Population<-0
+for(i in seq(1,length(Pops)))
+{
+temp<-get(paste0("Pop_",i))
+Population<-sum(Population,temp)  
+}
+Population
+```
+
+```{r}
+
+```
+

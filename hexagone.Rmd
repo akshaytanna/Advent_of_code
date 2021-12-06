@@ -1,0 +1,69 @@
+
+```{r}
+Raw_data<-readxl::read_xlsx("random/Test1.xlsx",sheet="Sheet6")
+```
+
+```{r}
+Flipped<-c()
+
+for (i in seq(1,nrow(Raw_data)))
+#for (i in seq(1,1))  
+{
+  #print(i) 
+  Move<-Raw_data$header[i]
+E=0
+N=0
+NE=0
+SE=0
+j=1
+  while (j <=str_length(Move))
+  {
+     #print(j)
+    if(str_sub(Move,j,j) %in% c("w","e")) {
+      move<-str_sub(Move,j,j)
+      if (move=="e")
+      {
+        E=E+1
+      } 
+      if(move=="w")
+      {
+        E=E-1
+      }
+    j=j+1  
+    } else {
+      move<-str_sub(Move,j,j+1)
+      if(move=="ne")
+      {
+        # N=N+1
+        # E=E+1
+        NE=NE+1
+      }
+      if(move=="sw")
+      {
+        NE=NE-1
+         #N=N-1
+         #E=E-1
+      }
+      if(move=="se")
+      {
+        SE=SE+1
+         #E=E+1
+         #N=N-1
+      }
+      if(move=="nw")
+      {
+        SE=SE-1
+         #E=E-1
+         #N=N+1
+      }
+   j=j+2
+    }
+A=E+floor(NE/2)+floor(SE/2)
+B=SE-NE
+  }
+# print(paste(E,NE,SE))
+Flipped<-c(Flipped,paste(A,B))
+}
+as.data.frame(table(Flipped))%>%arrange(-Freq)%>%filter(Freq%%2!=0)
+```
+
