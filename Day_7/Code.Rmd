@@ -1,0 +1,27 @@
+```{r}
+library(tidyverse)
+Raw_data<-readxl::read_xlsx("Data.xlsx")
+
+```
+
+```{r}
+Data<-Raw_data
+max(Data$header)
+min(Data$header)
+Total_fuel<-c()
+for(i in seq(min(Data$header),max(Data$header)))
+{
+  total_fuel<-Data%>%
+    mutate(Steps=abs(header-i))%>%
+    #mutate(Fuel=Steps)%>%
+    mutate(Fuel=Steps*(Steps+1)/2)%>%
+    pull(Fuel)%>%
+    sum()
+Total_fuel[i]<-total_fuel 
+}
+min(Total_fuel)    
+
+
+
+```
+

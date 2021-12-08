@@ -1,0 +1,85 @@
+```{r}
+
+#' Sorts letters in a character string by alphabetical order
+#'
+#' Vectorised
+str_arrange <- function(x){
+  x %>%
+    stringr::str_split("") %>% # Split string into letters
+    purrr::map(~sort(.) %>% paste(collapse = "")) %>% # Sort and re-combine
+    as_vector() # Convert list into vector
+}
+```
+
+```{r}
+Raw_data<-readxl::read_xlsx("Data.xlsx")
+```
+
+
+
+```{r}
+Data<-Raw_data
+Val=0
+for(i in seq(1,nrow(Data)))
+{
+  vector<-unlist(strsplit(Data$Signal[i],split = " "))
+  Output<-unlist(strsplit(Data$Output[i],split = " "))
+#vector<-c("acedgfb","cdfbe","gcdfa","fbcad","dab","cefabd","cdfgeb","eafb","cagedb","ab")
+# key<-data.frame(vector)%>%
+#   mutate(Number=case_when(str_length(vector)==2~1,
+#                           str_length(vector)==3~7,
+#                           str_length(vector)==4~4,
+#                           str_length(vector)==7~8))
+six_segs<-vector[which(str_length(vector)==6)]
+five_segs<-vector[which(str_length(vector)==5)]
+One<-vector[which(str_length(vector)==2)]
+Eight<-vector[which(str_length(vector)==7)]
+Four<-vector[which(str_length(vector)==4)]
+Seven<-vector[which(str_length(vector)==3)]
+for(i in seq(1,length(six_segs)))
+{
+  if(length(Reduce(setdiff, strsplit(c(six_segs[i], One), split = "")))==5) 
+
+  {
+    Six<-six_segs[i]
+  } else
+  if(length(Reduce(setdiff, strsplit(c(Four,six_segs[i]), split = "")))==1)
+  {
+    Zero<-six_segs[i]
+  } else
+  {
+    Nine<-six_segs[i]
+  }
+}
+for(i in seq(1,length(five_segs)))
+{
+  if(length(Reduce(setdiff, strsplit(c(five_segs[i], One), split = "")))==3) 
+  {
+    Three<-five_segs[i]
+  } else
+  if(length(Reduce(setdiff, strsplit(c(Six,five_segs[i]), split = "")))==2)
+  {
+    Two<-five_segs[i]
+  } else
+  {
+    Five<-five_segs[i]
+  }
+    
+}
+
+Numbers<-str_arrange(c(Zero,One,Two,Three,Four,Five,Six,Seven,Eight,Nine))
+
+names(Numbers)<-as.character(0:9)
+
+Output<-str_arrange(Output)
+
+      Th<-as.numeric(names(Numbers)[which(Numbers==Output[1])])
+      Hu<-as.numeric(names(Numbers)[which(Numbers==Output[2])])
+      Te<-as.numeric(names(Numbers)[which(Numbers==Output[3])])
+      Un<-as.numeric(names(Numbers)[which(Numbers==Output[4])])
+      val=1000*Th+100*Hu+10*Te+Un
+      Val=Val+val
+}
+Val
+```
+
