@@ -1,0 +1,70 @@
+```{r}
+library(tidyverse)
+Raw_data<-readxl::read_xlsx("Data.xlsx")
+Key<-readxl::read_xlsx("Data.xlsx",sheet="Sheet2")
+Key2<-readxl::read_xlsx("Data.xlsx",sheet="Sheet3")
+```
+Part 1
+```{r}
+Overall_score<-0
+
+for(i in seq(1,nrow(Raw_data)))
+{
+  Data<-Raw_data$header[i]
+
+while(str_detect(Data,"\\(\\)|\\[\\]|\\{\\}|\\<\\>"))
+  
+{
+Data<-str_replace_all(Data,"\\(\\)|\\[\\]|\\{\\}|\\<\\>","")  
+}
+  if(str_detect(Data,"\\)|\\]|\\}|\\>"))
+  {
+First_error_position<-str_locate(Data,"\\)|\\]|\\}|\\>")
+First_error<-str_sub(Data,First_error_position,First_error_position)
+score<-Key%>%
+  filter(Op==First_error)%>%
+  pull(Score)
+} else
+{
+score<-0
+}
+Overall_score<-Overall_score+score
+}
+Overall_score
+```
+
+Part 2
+```{r}
+
+Vector_score<-c()
+
+for(i in seq(1,nrow(Raw_data)))
+{
+  Data<-Raw_data$header[i]
+
+while(str_detect(Data,"\\(\\)|\\[\\]|\\{\\}|\\<\\>"))
+  
+{
+Data<-str_replace_all(Data,"\\(\\)|\\[\\]|\\{\\}|\\<\\>","")  
+}
+  if(str_detect(Data,"\\)|\\]|\\}|\\>"))
+  {
+
+} else
+{
+Overall_score<-0
+ for(j in seq(str_length(Data),1))
+ {
+  Op<-str_sub(Data,j,j)
+  score<-Key2%>%
+    filter(op==Op)%>%
+    pull(score)
+  Overall_score<-5*Overall_score+score
+ }
+Vector_score<-c(Vector_score,Overall_score)
+}
+
+}
+sort(Vector_score)[ceiling(length(Vector_score)/2)]
+```
+
