@@ -1,0 +1,50 @@
+```{r}
+library(tidyverse)
+Raw_data<-as_tibble(read_lines("Data.txt"))
+for (i in seq(1,nrow(Raw_data)))
+{
+  Raw_data$x[i]<-as.numeric(strsplit(Raw_data$value[i],split = ",")[[1]][1])
+  Raw_data$y[i]<-as.numeric(strsplit(Raw_data$value[i],split = ",")[[1]][2])
+}
+Raw_data<-Raw_data%>%select(-value)
+Raw_folds<-readxl::read_xlsx("Sample.xlsx",sheet="Sheet3")
+```
+
+```{r}
+
+Data<-Raw_data%>%mutate(x=x+1,y=y+1)
+Matrix<-matrix(data=F,nrow=max(Data$y),ncol=max(Data$x))
+for(i in seq (1,nrow(Data)))
+{
+  Matrix[Data$y[i],Data$x[i]]=T
+}
+```
+
+```{r}
+
+Folds<-Raw_folds%>%mutate(size=size+1)
+
+for(i in seq(1,nrow(Folds)))
+{
+  if(Folds$fold[i]=="y")
+  {
+    for(j in seq(1,(nrow(Matrix)-1)/2))
+    {
+    Matrix[j,]<-Matrix[j,]+Matrix[nrow(Matrix)+1-j,]
+    }
+    Matrix<-Matrix[1:((nrow(Matrix)-1)/2),]
+  }
+    if(Folds$fold[i]=="x")
+  {
+    for(j in seq(1,(ncol(Matrix)-1)/2))
+    {
+    Matrix[,j]<-Matrix[,j]+Matrix[,ncol(Matrix)+1-j]
+    }
+    Matrix<-Matrix[,1:((ncol(Matrix)-1)/2)]
+  }
+}
+Matrix[which(Matrix>0)]="X"
+Matrix[which(Matrix==0)]=" "
+Matrix
+```
+
